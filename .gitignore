@@ -5,3 +5,5 @@
 *.o
 *.o
 *.d
+.vscode/settings.json
+*.d
