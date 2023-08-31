@@ -16,8 +16,6 @@ typedef enum KEYPAD_BITS
     key_Select, key_Start
 }KEYPAD_BITS;
 
-//---Button Defines---
-
 #define KEY_A  0x0001
 #define KEY_B  0x0002
 #define KEY_SL 0x0004
@@ -34,6 +32,14 @@ typedef enum KEYPAD_BITS
 
 extern u16 __current_key;
 extern u16 __previous_key;
+
+inline void ScanKeys();
+
+inline void ScanKeys()
+{
+    __previous_key = __current_key;
+    __previous_key = ~REG_KEYINPUT & KEY_MASK;
+}
 
 u32 GetKey(u32 key);
 u32 GetKeyDown(u32 key);
