@@ -10,7 +10,6 @@
 int main()
 {
     int reg = DCNT_BG2 | DCNT_MODE3;
-    
     *(unsigned int*)REG_BASE = reg;
 
     //*(unsigned int*)0x04000000 = 0x0403;

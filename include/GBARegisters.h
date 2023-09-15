@@ -144,7 +144,49 @@
 
 //---Windowing Registers---
 
+// F  E  D  C : B  A  9  8 : 7  6  5  4 : 3  2  1  0
+// L  L  L  L : L  L  L  L : R  R  R  R : R  R  R  R
+#define REG_WIN0H              *((vu16*)(REG_BASE + 0x040))  // Window 0 X Coordinates (Write Only)
+#define REG_WIN1H              *((vu16*)(REG_BASE + 0x042))  // Window 1 X Coordinates (Write Only)
+
+// F  E  D  C : B  A  9  8 : 7  6  5  4 : 3  2  1  0
+// L  L  L  L : L  L  L  L : R  R  R  R : R  R  R  R
+#define REG_WIN0V              *((vu16*)(REG_BASE + 0x044))  // Window 0 V Coordinates (Write Only)
+#define REG_WIN1V              *((vu16*)(REG_BASE + 0x046))  // Window 1 V Coordinates (Write Only)
+
+#define REG_WININ              *((vu16*)(REG_BASE + 0x048))  // Inside Window Settings
+    // WININ | Bits 0-D
+    #define WIN0_BG0            0x0001      // 0000:0000:0000:0001 | BG0 in win0
+    #define WIN0_BG1            0x0002      // 0000:0000:0000:0010 | BG1 in win0
+    #define WIN0_BG2            0x0004      // 0000:0000:0000:0100 | BG2 in win0
+    #define WIN0_BG3            0x0008      // 0000:0000:0000:1000 | BG3 in win0
+    #define WIN0_SPRITES        0x0010      // 0000:0000:0001:0000 | Sprites in win0
+    #define WIN0_BLENDS         0x0020      // 0000:0000:0010:0000 | Blends in win0
+    #define WIN1_BG0            0x0100      // 0000:0001:0000:0000 | BG0 in win1
+    #define WIN1_BG1            0x0200      // 0000:0010:0000:0000 | BG1 in win1
+    #define WIN1_BG2            0x0400      // 0000:0100:0000:0000 | BG2 in win1
+    #define WIN1_BG3            0x0800      // 0000:1000:0000:0000 | BG3 in win1
+    #define WIN1_SPRITES        0x1000      // 0001:0000:0000:0000 | Sprites in win1
+    #define WIN1_BLENDS         0x2000      // 0010:0000:0000:0000 | Blends in win1
+
+
+#define REG_WINOUT              *((vu16*)(REG_BASE + 0x04A)) // Outside Window and Sprite Window
+    // WINOUT | Bits 0-D
+    #define WINOUT_BG0O         0x0001      // 0000:0000:0000:0001 | BG0 outside
+    #define WINOUT_BG1O         0x0002      // 0000:0000:0000:0010 | BG1 outside
+    #define WINOUT_BG2O         0x0004      // 0000:0000:0000:0100 | BG2 outside
+    #define WINOUT_BG3O         0x0008      // 0000:0000:0000:1000 | BG3 outside
+    #define WINOUT_SPRITES      0x0010      // 0000:0000:0001:0000 | Sprites in win0 might be sprite win
+    #define WINOUT_BLENDS       0x0020      // 0000:0000:0010:0000 | Blends in win0 might be sprite win
+    #define WINOUT_BG1S         0x0100      // 0000:0001:0000:0000 | BG0 in sprite win
+    #define WINOUT_BG1S         0x0200      // 0000:0010:0000:0000 | BG1 in sprite win
+    #define WINOUT_BG1S         0x0400      // 0000:0100:0000:0000 | BG2 in sprite win
+    #define WINOUT_BG1S         0x0800      // 0000:1000:0000:0000 | BG3 in sprite win
+    #define WINOUT_SPRITESS     0x1000      // 0001:0000:0000:0000 | Sprites in sprite win
+    #define WINOUT_BLENDSS      0x2000      // 0010:0000:0000:0000 | Blends in sprite win
+
 //---Effects Registers---
+
 
 //---Sound Controls---
 

@@ -16,3 +16,4 @@ GBA-Project.elf
 build/main.o
 build/main.d
 build/gbatest.map
+build/gbatest.map
