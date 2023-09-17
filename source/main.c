@@ -5,18 +5,18 @@
 */
 
 #include "../include/GBATypes.h"
-#include "../include/GBAVideo.h"
+#include "../include/GBARegisters.h"
+#include "../include/GBAGraphics.h"
 
 int main()
 {
-    int reg = DCNT_BG2 | DCNT_MODE3;
-    *(unsigned int*)REG_BASE = reg;
+    setGraphicMode(3);
+    setBackground(2, 1);
+    setScreenBlank(0);
 
-    //*(unsigned int*)0x04000000 = 0x0403;
-
-    ((unsigned short*)0x06000000)[120+80*240] = 0x001F;
-    ((unsigned short*)0x06000000)[136+80*240] = 0x03E0;
-    ((unsigned short*)0x06000000)[120+96*240] = 0x7C00;
+    // ((unsigned short*)0x06000000)[120+80*240] = 0x001F;
+    // ((unsigned short*)0x06000000)[136+80*240] = 0x03E0;
+    // ((unsigned short*)0x06000000)[120+96*240] = 0x7C00;
 
     while(1);
     return(0);
