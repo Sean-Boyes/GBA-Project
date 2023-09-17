@@ -4,7 +4,7 @@
 #include "../include/GBABase.h"
 #include "../include/GBATypes.h"
 
-//---Graphics Hardware Registers
+//---Graphics Hardware Registers 0x04000000 - 0x04000054
 
 #define REG_DISPCNT             *((vu16*)(REG_BASE + 0x0000)) // 0x04000000
     // Mode | Bits 0-2
@@ -185,10 +185,136 @@
     #define WINOUT_SPRITESS     0x1000      // 0001:0000:0000:0000 | Sprites in sprite win
     #define WINOUT_BLENDSS      0x2000      // 0010:0000:0000:0000 | Blends in sprite win
 
-//---Effects Registers---
+//---Effects Registers--- 0x0400004C - 0x04000054
+
+// F  E  D  C : B  A  9  8 : 7  6  5  4 : 3  2  1  0
+// V  V  V  V : U  U  U  U : J  J  J  J : I  I  I  I
+#define REG_MOSAIC              *((vu16*)(REG_BASE + 0X04C)) // V: Sprite Y Size U: Sprite X Size J: BG Y Size I: BG X Size (Write Only)
+
+#define REG_BLDCNT              *((vu16*)(REG_BASE + 0x050)) // Blending modes
+    // BG#S | BITS 0-3
+    #define BLND_BG0S            0x0001      // 0000:0000:0000:0001 | Source
+    #define BLND_BG1S            0x0002      // 0000:0000:0000:0010 | Source
+    #define BLND_BG2S            0x0004      // 0000:0000:0000:0100 | Source
+    #define BLND_BG3S            0x0008      // 0000:0000:0000:1000 | Source
+
+    #define BLND_SPRTS           0x0010      // 0000:0000:0001:0000 | Source
+    #define BLND_BKDPS           0x0020      // 0000:0000:0010:0000 | Source
+    // MODE | Bits 6-7
+    #define BLND_OFF            0X0000      // 0000:0000:0000:0000 | All effects off
+    #define BLND_ALPHA          0X0000      // 0000:0000:0100:0000 | Alpha blend
+    #define BLND_LIGHT          0X0000      // 0000:0000:1000:0000 | Lighten (fade to white)
+    #define BLND_DARK           0X0000      // 0000:0000:1100:0000 | Darken (fade to black)
+
+    // BG#T | Bits 8-B 
+    #define BLND_BG0T           0x0100      // 0000:0001:0000:0000 | Target
+    #define BLND_BG1T           0x0200      // 0000:0010:0000:0000 | Target
+    #define BLND_BG2T           0x0400      // 0000:0100:0000:0000 | Target
+    #define BLND_BG3T           0x0800      // 0000:1000:0000:0000 | Target
+
+    #define BLND_SPRTT          0x1000      // 0001:0000:0000:0000 | Target
+    #define BLND_BKDPT          0x2000      // 0010:0000:0000:0000 | Target
+
+#define REG_BLDALPHA            *((vu16*)(REG_BASE + 0x052)) // Write Only
+    // Bits 0-4 | Coefficient B, target pixel (layer below)
+    // Bits 8-C | Coefficient A, source pixel (layer above)
+
+#define REG_BLDY                *((vu16*)(REG_BASE + 0x054)) // Write Only
+    // Bits 0-4 | The lighten / Darken value
+
+//---Sound Controls--- 0x040000060 - 0x0400000A6
+
+#define REG_SOUND1CNT_L         *((vu16*)(REG_BASE + 0x060)) // Sound 1 Sweep control
+    // Bits 0-2 | Number of sweep shifts | T = T +- T / (2n)
+    // Bit 3 | Sweep increase or decrease
+    // Bits 4-6 | Sweep Time
+
+#define REG_SOUND1CNT_H         *((vu16*)(REG_BASE + 0x062)) // Sound 1 length, wave duty and evelope control
+
+#define REG_SOUND2CNT_L         *((vu16*)(REG_BASE + 0x068)) // Sound 2 Length, wave duty
+
+#define REG_SOUND2CNT_H         *((vu16*)(REG_BASE + 0x06C)) // Sound 2 Frequency, reset and loop control
+
+#define REG_SOUND1CNT_X         *((vu16*)(REG_BASE + 0x064)) // Sound 1 Frequency, reset and loop control
+
+#define REG_SOUND3CNT_L         *((vu16*)(REG_BASE + 0x070)) // Sound 3 Enable and wave ram bank control
+
+#define REG_SOUND3CNT_H         *((vu16*)(REG_BASE + 0x072)) // Sound 3 Sound length and output level control
+
+#define REG_SOUND3CNT_X         *((vu16*)(REG_BASE + 0x074)) // Sound 3 Frequency, reset and loop control
+
+#define REG_SOUND4CNT_L         *((vu16*)(REG_BASE + 0x078)) // Sound 4 Length, output level and evelope control
+
+#define REG_SOUND4CNT_H         *((vu16*)(REG_BASE + 0x07C)) // Sound 4 Nouse parameters, reset and loop control
+
+#define REG_SOUNDCNT_L          *((vu16*)(REG_BASE + 0x080)) // Sound 1-4 Output level and Stereo control
+
+#define REG_SOUNDCNT_H          *((vu16*)(REG_BASE + 0x082)) // Direct Sound control and Sound 1-4 output ratio
+
+#define REG_SOUNDCNT_X          *((vu16*)(REG_BASE + 0x084)) // Master sound enable and Sound 1-4 play status
+
+#define REG_SOUNDBIAS           *((vu16*)(REG_BASE + 0x088)) // Sound bias and Amplitude resolution control
+
+// These registers togeth contain four 4-bit wave RAM sample for sound channel 3 (4 bytes each)
+#define REG_WAVE_RAM0_L         *((vu16*)(REG_BASE + 0x090)) // Sound 3 sample 0-3
+#define REG_WAVE_RAM0_H         *((vu16*)(REG_BASE + 0x092)) // Sound 3 sample 4-7
+#define REG_WAVE_RAM1_L         *((vu16*)(REG_BASE + 0x094)) // Sound 3 sample 8-11
+#define REG_WAVE_RAM1_H         *((vu16*)(REG_BASE + 0x096)) // Sound 3 sample 12-15
+#define REG_WAVE_RAM2_L         *((vu16*)(REG_BASE + 0x098)) // Sound 3 sample 16-19
+#define REG_WAVE_RAM2_H         *((vu16*)(REG_BASE + 0x09A)) // Sound 3 sample 20-23
+#define REG_WAVE_RAM3_L         *((vu16*)(REG_BASE + 0x09C)) // Sound 3 sample 23-27
+#define REG_WAVE_RAM3_H         *((vu16*)(REG_BASE + 0x09E)) // Sound 3 sample 28-31
+
+// These are locations of the Direct Sound 8-bit FIFO
+#define REG_FIFO_A_L            *((vu16*)(REG_BASE + 0x0A0)) // Direct Sound channel A sampless 0-1 (Write Only)
+#define REG_FIFO_A_H            *((vu16*)(REG_BASE + 0x0A2)) // Direct Sound channel A sampless 2-3 (Write Only)
+#define REG_FIFO_B_L            *((vu16*)(REG_BASE + 0x0A4)) // Direct Sound channel B sampless 0-1 (Write Only)
+#define REG_FIFO_B_H            *((vu16*)(REG_BASE + 0x0A6)) // Direct Sound channel B sampless 2-3 (Write Only)
 
 
-//---Sound Controls---
+#define REG_DMA0SAD             *((vu16*)(REG_BASE + 0x0B0)) // DMA0 Source Adress (Write Only)
+    // Bits 0-26 | 27-bit
+#define REG_DMA1SAD             *((vu16*)(REG_BASE + 0x0BC)) // DMA1 Source Adress (Write Only)
+#define REG_DMA2SAD             *((vu16*)(REG_BASE + 0x0C8)) // DMA2 Source Adress (Write Only)
+#define REG_DMA3SAD             *((vu16*)(REG_BASE + 0x0D4)) // DMA3 Source Adress (Write Only)
+    // Bits 0-27 | 28-bit
+
+#define REG_DMA0DAD             *((vu16*)(REG_BASE + 0x0B4)) // DMA0 Destination Address
+#define REG_DMA1DAD             *((vu16*)(REG_BASE + 0x0C0)) // DMA1 Destination Address
+#define REG_DMA2DAD             *((vu16*)(REG_BASE + 0x0CC)) // DMA2 Destination Address
+    // Bits 0-26 | 27-bit
+#define REG_DMA3DAD             *((vu16*)(REG_BASE + 0x0D8)) // DMA3 Destination Address
+    // Bits 0-27 | 28-bit
+
+#define REG_DMA0CNT_L           *((vu16*)(REG_BASE + 0x0B8)) // DMA0 Count Register
+#define REG_DMA1CNT_L           *((vu16*)(REG_BASE + 0x0B8)) // DMA1 Count Register
+#define REG_DMA2CNT_L           *((vu16*)(REG_BASE + 0x0B8)) // DMA2 Count Register
+#define REG_DMA3CNT_L           *((vu16*)(REG_BASE + 0x0B8)) // DMA3 Count Register
+    // Bits 0-D | Number of words or halfwords to copy
+
+#define REG_DMA0CNT_H           *((vu16*)(REG_BASE + 0x0BA)) // DMA0 Control Register
+#define REG_DMA1CNT_H           *((vu16*)(REG_BASE + 0x0C6)) // DMA1 Control Register
+#define REG_DMA2CNT_H           *((vu16*)(REG_BASE + 0x0D2)) // DMA2 Control Register
+#define REG_DMA3CNT_H           *((vu16*)(REG_BASE + 0x0DE)) // DMA3 Control Register
+
+
+#define REG_TM0D                *((vu16*)(REG_BASE + 0x100)) // Timer 0 Data
+#define REG_TM1D                *((vu16*)(REG_BASE + 0x104)) // Timer 1 Data
+#define REG_TM2D                *((vu16*)(REG_BASE + 0x108)) // Timer 2 Data
+#define REG_TM3D                *((vu16*)(REG_BASE + 0x10C)) // Timer 3 Data
+    // Bits 0-F | Current count of the timer
+
+#define REG_TM0CNT              *((vu16*)(REG_BASE + 0x102)) // Timer 0 Control
+#define REG_TM1CNT              *((vu16*)(REG_BASE + 0x106)) // Timer 1 Control
+#define REG_TM2CNT              *((vu16*)(REG_BASE + 0x10A)) // Timer 2 Control
+#define REG_TM3CNT              *((vu16*)(REG_BASE + 0x10E)) // Timer 3 Control
+    // Bits 0-1 | Frequency at which the timer updates
+    // But 2 | Cascade
+    // Bit 6 | Generate an interrupt on overflow
+    // Bit 7 | Enable the timer
+
+
+
 
 //---DMA Source Registers (Write Only)---
 
