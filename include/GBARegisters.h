@@ -6,6 +6,50 @@
 #include "../include/GBABase.h"
 #include "../include/GBATypes.h"
 
+// Read / Write Registers
+vu16 set16Bit(vu16 REG, u16 bitStart, u16 bitSize, int data)
+{
+    vu16 mask = 0b1;
+    // Create Mask
+    mask <<= bitSize;
+    mask -= 1;
+    mask <<= bitStart;
+    mask = ~mask;
+    // Insert data
+    REG &= mask;
+    data <<= bitStart;
+    REG |= data;
+
+    return REG;
+}
+vu32 set32Bit(vu32 REG, u16 bitStart, u16 bitSize, vu32 data)
+{
+    vu16 mask = 0b1;
+    // Create Mask
+    mask <<= bitSize;
+    mask -= 1;
+    mask <<= bitStart;
+    mask = ~mask;
+    // Insert data
+    REG &= mask;
+    data <<= bitStart;
+    REG |= data;
+
+    return REG;
+}
+vu16 read16Bit(vu16 REG, u16 bitStart, u16 bitSize)
+{
+    vu16 mask = 0b1;
+    // Create Mask
+    mask <<= bitSize;
+    mask -= 1;
+    mask <<= bitStart;
+    // Extract data
+    REG &= mask;
+    REG >>= bitStart;
+
+    return REG;
+}
 
 //---Graphics Hardware Registers 0x04000000 - 0x04000054
 
@@ -27,7 +71,7 @@
     // Bit 2 | VCount trigger status, set if current scacnline matches the scanline trigger (REG_VCOUNT == REG_DISPSTAT{8-F}) (Read Only)
     // Bit 3 | VBlank interrupt request. If set, an interrupt is fired at VBlank
     // Bit 4 | HBlank interrupt request. If set, an interrupt is fired at HBlank
-    // Bit 5 | VCount interrup request. If set, an iterrupt is fired at VCount if current scanline matches the trigger value
+    // Bit 5 | VCount interrupt request. If set, an iterrupt is fired at VCount if current scanline matches the trigger value
     // Bits 8-F | VCount trigger value, if current scanline is at this value, bit 2 is set
 
 #define REG_VCOUNT              *((vu16*)(REG_BASE + 0x0006))  // Vertical count | Range [0,227] | Read only
