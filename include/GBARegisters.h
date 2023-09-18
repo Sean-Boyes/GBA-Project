@@ -39,37 +39,13 @@
 #define REG_BG1CNT              *((vu16*)(REG_BASE + 0x00A))  // Background 1 Registers
 #define REG_BG2CNT              *((vu16*)(REG_BASE + 0x00C))  // Background 2 Registers
 #define REG_BG3CNT              *((vu16*)(REG_BASE + 0x00E))  // Background 3 Registers
-    // BPI | Bits 0-1
-    #define DBG_P0             0x0000      // 0000:0000:0000:0000 | Background priority index 0
-    #define DBG_P1             0x0001      // 0000:0000:0000:0001 | Background priority index 1
-    #define DBG_P2             0x0002      // 0000:0000:0000:0010 | Background priority index 2
-    #define DBG_P3             0x0003      // 0000:0000:0000:0011 | Background priority index 3
-
-    // SATD | Bits 2-3
-    #define DBG_S1             0x0004      // 0000:0000:0000:0100 | Starting address of character tile data, Address = 0x06000000 + S * 0x4000
-    #define DBG_S2             0x0008      // 0000:0000:0000:0100 | Starting address of character tile data, Address = 0x06000000 + S * 0x4000
-    
-    // ME | Bit 6
-    #define DBG_ME             0x0040      // 0000:0000:0100:0000 | Mosiac effect
-
-    // CPT | Bit 7 
-    #define DBG_CPT            0x0080      // 0000:0000:1000:0000 | 1: Standard Color palette, 0: each tile uses 1 of 16 different 16 color palettes
-
-    // SATM | Bits 8-C
-    #define DBG_SATM           0x0100      // 0000:0001:0000:0000 | Starting address of character tile map, Address = 0x06000000 + M * 0x800
-    #define DBG_SATM           0x0200      // 0000:0010:0000:0000 | Starting address of character tile map, Address = 0x06000000 + M * 0x800
-    #define DBG_SATM           0x0400      // 0000:0100:0000:0000 | Starting address of character tile map, Address = 0x06000000 + M * 0x800
-    #define DBG_SATM           0x0800      // 0000:1000:0000:0000 | Starting address of character tile map, Address = 0x06000000 + M * 0x800
-    #define DBG_SATM           0x1000      // 0001:0000:0000:0000 | Starting address of character tile map, Address = 0x06000000 + M * 0x800
-
-    // SO | Bit D | Read Only for BG0 and BG1
-    #define DBG1_SO             0x2000      // 0010:0000:0000:0000 | Screen Over, rotational backgrounds get tiled repeatedly at edges or a single tile
-
-    // SOTM | Bits E-F
-    #define DBG_SOTM1          0x0000      // 0000:0000:0000:0000 | For "text" backgrounds: 32x32 tiles, For rotational backgrounds: 16x16 tiles
-    #define DBG_SOTM1          0x4000      // 0100:0000:0000:0000 | For "text" backgrounds: 64x32 tiles, For rotational backgrounds: 32x32 tiles
-    #define DBG_SOTM1          0x8000      // 1000:0000:0000:0000 | For "text" backgrounds: 32x64 tiles, For rotational backgrounds: 64x64 tiles
-    #define DBG_SOTM1          0xC000      // 1100:0000:0000:0000 | For "text" backgrounds: 64x64 tiles, For rotational backgrounds: 128x128 tiles
+    // Bits 0 -1 | Background priority index 0
+    // Bits 2-3 | Starting address of character tile data, Address = 0x06000000 + S * 0x4000
+    // Bit 6 | Mosiac effect
+    // Bit 7 | 1: Standard Color palette, 0: each tile uses 1 of 16 different 16 color palettes
+    // Bits 8-C | Starting address of character tile map, Address = 0x06000000 + M * 0x800
+    // Bit D | Screen Over, rotational backgrounds get tiled repeatedly at edges or a single tile (Read Only for BG0 and BG1)
+    // Bits E-F | For "text" backgrounds: 32x32 tiles, For rotational backgrounds: 16x16 tiles
 
 
 //---Background Rotation / Scaling Registers---
