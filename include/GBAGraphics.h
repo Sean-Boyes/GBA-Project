@@ -7,40 +7,13 @@
 #include "GBARegisters.h"
 #include "GBATypes.h"
 
-int set16Bit(int REG, u16 bitStart, u16 bitSize, int data)
-{
-    vu16 mask = 0b1;
-    // Create Mask
-    mask <<= bitSize;
-    mask -= 1;
-    mask <<= bitStart;
-    mask = ~mask;
-    // Insert data
-    REG &= mask;
-    data <<= bitStart;
-    REG |= data;
-
-    return REG;
-}
-vu32 set32Bit(vu32 REG, u16 bitStart, u16 bitSize, vu32 data)
-{
-    vu16 mask = 0b1;
-    // Create Mask
-    mask <<= bitSize;
-    mask -= 1;
-    mask <<= bitStart;
-    mask = ~mask;
-    // Insert data
-    REG &= mask;
-    data <<= bitStart;
-    REG |= data;
-
-    return REG;
-}
-
 void setGraphicMode(u8 VideoMode) // Mode 0-5
 {
     REG_DISPCNT = set16Bit(REG_DISPCNT, 0, 3, VideoMode);
+}
+bool isGBCGame()
+{
+    return read16Bit(REG_DISPCNT, 3, 1);
 }
 void setPage(bool page) // Flip between pages for modes 4 and 5
 {
@@ -67,7 +40,6 @@ void setBackground(u8 Backgound, bool enable) // Enables rendering of backgound 
         case 2: REG_DISPCNT = set16Bit(REG_DISPCNT, 0xA, 1, enable); break;
         case 3: REG_DISPCNT = set16Bit(REG_DISPCNT, 0xB, 1, enable); break;
     }
-
 }
 void setDisplaySprites(bool enable) // Enables display of sprites
 {
@@ -80,6 +52,40 @@ void setWindow(bool window) // Enable Window 0-1
 void setSpriteWindows(bool enable) // Enable use of the Sprite windows
 {
     REG_DISPCNT = set16Bit(REG_DISPCNT, 0xF, 1, enable);
+}
+
+bool getVBlankStatus()
+{
+    return read16Bit(REG_DISPSTAT, 0, 1);
+}
+bool getHBlankStatus()
+{
+    return read16Bit(REG_DISPSTAT, 1, 1);
+}
+bool getVCountTriggerStatus()
+{
+    return read16Bit(REG_DISPSTAT, 2, 1);
+}
+void setVBlankInterrupt(bool enable)
+{
+    set16Bit(REG_DISPSTAT, 3, 1, enable);
+}
+void setHBlankInterrupt(bool enable)
+{
+    set16Bit(REG_DISPSTAT, 4, 1, enable);
+}
+void setVCountInterrupt(bool enable)
+{
+    set16Bit(REG_DISPSTAT, 5, 1, enable);
+}
+void setVCountLineTrigger(bool value)
+{
+    set16Bit(REG_DISPSTAT, 8, 8, value);
+}
+
+u16 getVCount()
+{
+    return read16Bit(REG_VCOUNT, 8, 8);
 }
 
 #endif
