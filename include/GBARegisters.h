@@ -95,7 +95,7 @@ vu16 read16Bit(vu16 REG, u16 bitStart, u16 bitSize)
 //---Background Rotation / Scaling Registers---
 
 #define REG_BG0HOFS            *((vu16*)(REG_BASE + 0x010))  // Horizontal scroll co-ordinate for BG0 (Write Only)
-#define REG_BG0BOFS            *((vu16*)(REG_BASE + 0x012))  // Vertical scroll co-ordinate for BG0 (Write Only)
+#define REG_BG0VOFS            *((vu16*)(REG_BASE + 0x012))  // Vertical scroll co-ordinate for BG0 (Write Only)
 #define REG_BG1HOFS            *((vu16*)(REG_BASE + 0x014))  // Horizontal scroll co-ordinate for BG1 (Write Only)
 #define REG_BG1VOFS            *((vu16*)(REG_BASE + 0x016))  // Vertical scroll co-ordinate for BG1 (Write Only)
 #define REG_BG2HOFS            *((vu16*)(REG_BASE + 0x018))  // Horizontal scroll co-ordinate for BG2 (Write Only)
