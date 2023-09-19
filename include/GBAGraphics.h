@@ -7,6 +7,31 @@
 #include "GBARegisters.h"
 #include "GBATypes.h"
 
+#define SCREENHEIGHT    160
+#define SCREENWIDTH     240
+
+// Bitmap
+void mode3SetPixel(u16 xCoordinate, u16 yCoordinate, u16 colour) // 240x160 1-page 16bit colour
+{
+    ((unsigned short*)VRAM)[xCoordinate+(SCREENHEIGHT-yCoordinate)*240] = colour;
+}
+void mode4SetPixel(u16 xCoordinate, u16 yCoordinate, u8 palette, u8 paletteIndex) // 240x160 2-page 8bit colour
+{
+    // ! Untested !
+    // If bit 3 of REG_DISPCNT is 1, the VRAM location is 0x0600A000, ie page flipping
+    // This is done with nonbranching method with boolean math
+    ((unsigned short*)VRAM+(read16Bit(REG_DISPCNT,4,1)))[xCoordinate+(SCREENHEIGHT-yCoordinate)*SCREENHEIGHT] = read16Bit(MEM_PAL + palette, paletteIndex, 8);
+}
+void mode5SetPixel(u16 xCoordinate, u16 yCoordinate, u16 colour) // 160x128 2-page 16bit colour
+{
+    // ! Untested !
+    // If bit 3 of REG_DISPCNT is 1, the VRAM location is 0x0600A000, ie page flipping
+    // This is done with nonbranching method with boolean math
+    ((unsigned short*)VRAM+(read16Bit(REG_DISPCNT,4,1)))[xCoordinate+((SCREENHEIGHT*(2/3))-yCoordinate)*160] = colour;
+}
+
+
+// Register Control Start
 void setGraphicMode(u8 VideoMode) // Mode 0-5
 {
     REG_DISPCNT = set16Bit(REG_DISPCNT, 0, 3, VideoMode);
