@@ -2,6 +2,8 @@
 #define GBA_Graphics
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include "GBABase.h"
 #include "GBARegisters.h"
@@ -13,7 +15,7 @@
 // Bitmap
 void mode3SetPixel(u16 xCoordinate, u16 yCoordinate, u16 colour) // 240x160 1-page 16bit colour
 {
-    ((unsigned short*)VRAM)[xCoordinate+(SCREENHEIGHT-yCoordinate)*240] = colour;
+    ((unsigned short*)VRAM)[xCoordinate+(yCoordinate)*240] = colour;
 }
 void mode4SetPixel(u16 xCoordinate, u16 yCoordinate, u8 palette, u8 paletteIndex) // 240x160 2-page 8bit colour
 {
@@ -28,6 +30,38 @@ void mode5SetPixel(u16 xCoordinate, u16 yCoordinate, u16 colour) // 160x128 2-pa
     // If bit 3 of REG_DISPCNT is 1, the VRAM location is 0x0600A000, ie page flipping
     // This is done with nonbranching method with boolean math
     ((unsigned short*)VRAM+(read16Bit(REG_DISPCNT,4,1)))[xCoordinate+((SCREENHEIGHT*(2/3))-yCoordinate)*160] = colour;
+}
+// This was actually a challenge to create
+// Mostly branchless
+void mode3DrawLine (u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
+{
+    u16 x = x0;
+    u16 y = y0;
+
+    if ( abs(x1-x0) >= abs(y1-y0) )
+    {
+        u16 change = (abs(y1-y0) * 256) / (abs(x1-x0));
+        u16 changeP = change;
+        while (x != x1)
+        {
+            mode3SetPixel(x,y,colour);
+            x = x - 1 + 2*(x < x1);
+            y = y0 + (changeP >> 8);
+            changeP += change;
+        }
+    }
+    else
+    {
+        u16 change = (abs(x1-x0) * 256) / (abs(y1-y0));
+        u16 changeP = change;
+        while (y != y1)
+        {
+            mode3SetPixel(x,y,colour);
+            y = y - 1 + 2*(y < y1);
+            x = x0 + (changeP >> 8);
+            changeP += change;
+        }
+    }
 }
 
 
