@@ -46,7 +46,7 @@ void mode3DrawLine (u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
         {
             mode3SetPixel(x,y,colour);
             x = x - 1 + 2*(x < x1);
-            y = y0 + (changeP >> 8);
+            y = y0 + (2*(y < y1)-1)*(changeP >> 8);
             changeP += change;
         }
     }
@@ -58,7 +58,7 @@ void mode3DrawLine (u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
         {
             mode3SetPixel(x,y,colour);
             y = y - 1 + 2*(y < y1);
-            x = x0 + (changeP >> 8);
+            x = x0 + (2*(x < x1)-1)*(changeP >> 8);
             changeP += change;
         }
     }
