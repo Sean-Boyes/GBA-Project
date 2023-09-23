@@ -15,7 +15,7 @@
 // Bitmap
 void mode3SetPixel(u16 xCoordinate, u16 yCoordinate, u16 colour) // 240x160 1-page 16bit colour
 {
-    ((unsigned short*)VRAM)[xCoordinate+(yCoordinate)*240] = colour;
+    ((unsigned short*)VRAM)[xCoordinate+(SCREENHEIGHT-yCoordinate)*240] = colour;
 }
 void mode4SetPixel(u16 xCoordinate, u16 yCoordinate, u8 palette, u8 paletteIndex) // 240x160 2-page 8bit colour
 {
@@ -41,12 +41,12 @@ void mode3DrawLine (u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
     if ( abs(x1-x0) >= abs(y1-y0) )
     {
         u16 change = (abs(y1-y0) * 256) / (abs(x1-x0));
-        u16 changeP = change;
+        u16 changeP = change + 128;
         while (x != x1)
         {
             mode3SetPixel(x,y,colour);
-            x = x - 1 + 2*(x < x1);
-            y = y0 + (2*(y < y1)-1)*(changeP >> 8);
+            x = x - 1 + 2*(x0 < x1);
+            y = y0 + (2*(y0 < y1)-1)*(changeP >> 8);
             changeP += change;
         }
     }
@@ -57,11 +57,12 @@ void mode3DrawLine (u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
         while (y != y1)
         {
             mode3SetPixel(x,y,colour);
-            y = y - 1 + 2*(y < y1);
-            x = x0 + (2*(x < x1)-1)*(changeP >> 8);
+            y = y - 1 + 2*(y0 < y1);
+            x = x0 + (2*(x0 < x1)-1)*(changeP >> 8);
             changeP += change;
         }
     }
+    mode3SetPixel(x1,y1,colour);
 }
 
 
