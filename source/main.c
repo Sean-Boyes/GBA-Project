@@ -34,10 +34,10 @@ int main()
     }
 
     // from 1,1 to 3,3
-    mode3DrawLine(0,0,10,5,0x03E0);
-    mode3DrawLine(0,0,27,3,0x001F);
-    mode3DrawLine(0,0,7,31,0x0000);
-    mode3DrawLine(69,4,20,20,0x7C00);
+    mode3DrawLine(SCREENWIDTH/2,SCREENHEIGHT/2,SCREENWIDTH,SCREENHEIGHT,0x001F);
+    mode3DrawLine(SCREENWIDTH/2,SCREENHEIGHT/2,0,SCREENHEIGHT,0x03E0);
+    mode3DrawLine(SCREENWIDTH/2,SCREENHEIGHT/2,SCREENWIDTH,0,0x7C00);
+    mode3DrawLine(SCREENWIDTH/2,SCREENHEIGHT/2,0,0,0x0000);
 
     while(1)
     {
