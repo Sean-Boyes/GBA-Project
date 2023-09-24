@@ -64,6 +64,7 @@ int main()
     u16 pointH[] = {50,140};
 
     float t = 0;
+    float r = 0;
     float xScale = 50;
     float yScale = 10;
 
@@ -89,6 +90,7 @@ int main()
         mode3DrawLine(pointG[0],pointG[1],pointC[0],pointC[1],0xFFFF);
         mode3DrawLine(pointH[0],pointH[1],pointD[0],pointD[1],0xFFFF);
 
+        // left to right
         pointA[0] = xScale*cos(t) + 120; 
         pointB[0] = xScale*cos(t+1.57) + 120;
         pointC[0] = xScale*cos(t+3.14) + 120; 
@@ -108,6 +110,31 @@ int main()
         pointF[1] = yScale*sin(t+1.57) + 40;
         pointG[1] = yScale*sin(t+3.14) + 40; 
         pointH[1] = yScale*sin(t+4.71) + 40; 
+
+        // top to bottom 
+        if (read16Bit(REG_KEYINPUT, 0, 1) == 0)
+        {
+            pointA[1] = xScale*cos(r) + 80; 
+            pointB[1] = xScale*cos(r+1.57) + 80;
+            pointC[1] = xScale*cos(r+3.14) + 80; 
+            pointD[1] = xScale*cos(r+4.71) + 80; 
+
+            pointA[0] = yScale*sin(r) + 150; 
+            pointB[0] = yScale*sin(r+1.57) + 150;
+            pointC[0] = yScale*sin(r+3.14) + 150; 
+            pointD[0] = yScale*sin(r+4.71) + 150; 
+
+            pointE[1] = xScale*cos(r) + 80; 
+            pointF[1] = xScale*cos(r+1.57) + 80;
+            pointG[1] = xScale*cos(r+3.14) + 80; 
+            pointH[1] = xScale*cos(r+4.71) + 80; 
+
+            pointE[0] = yScale*sin(r) + 80; 
+            pointF[0] = yScale*sin(r+1.57) + 80;
+            pointG[0] = yScale*sin(r+3.14) + 80; 
+            pointH[0] = yScale*sin(r+4.71) + 80;
+        }
+
 
         mode3DrawLine(pointA[0],pointA[1],pointB[0],pointB[1],0x001F);
         mode3DrawLine(pointB[0],pointB[1],pointC[0],pointC[1],0x03E0);
@@ -130,7 +157,12 @@ int main()
             y = y + 1;
             y = y + 1;
         }
-        t = t + 0.1;
+
+        if (read16Bit(REG_KEYINPUT, 4,1) == 0) t = t + 0.1;
+        if (read16Bit(REG_KEYINPUT, 5,1) == 0) t = t - 0.1;
+        if (read16Bit(REG_KEYINPUT, 6,1) == 0) r = r + 0.1;
+        if (read16Bit(REG_KEYINPUT, 7,1) == 0) r = r - 0.1;
+        
         
         while(getVBlankStatus())
         {
