@@ -3,7 +3,6 @@
 *.map
 *.d
 *.o
-*.o
 *.d
 .vscode/settings.json
 *.d
@@ -13,5 +12,4 @@ GBA-Project.gba
 GBA-Project.elf
 build/main.o
 build/main.d
-build/gbatest.map
 build/gbatest.map
