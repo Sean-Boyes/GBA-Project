@@ -12,7 +12,7 @@
 
 int main()
 {
-    setGraphicMode(3);
+    setGraphicMode(5);
     setBackground(2, 1);
     setScreenBlank(0);
 
@@ -26,14 +26,6 @@ int main()
     // mode3SetPixel(1,1,0xFFFF); // White
 
     // mode3Line(1,1,10,10,0x7C00);
-
-    for(u16 i = 0; i <= SCREENWIDTH; ++i)
-    {
-        for(u16 ii = 0; ii <= SCREENHEIGHT; ++ii)
-        {
-            mode3SetPixel(i,ii,0xFFFF);
-        }
-    }
 
     // from 1,1 to 3,3
 
@@ -54,120 +46,119 @@ int main()
 
     // Vertex test
 
-    u16 pointA[] = {200,140};
-    u16 pointB[] = {200,70};
-    u16 pointC[] = {50,70};
-    u16 pointD[] = {50,140};
-    u16 pointE[] = {200,140};
-    u16 pointF[] = {200,70};
-    u16 pointG[] = {50,70};
-    u16 pointH[] = {50,140};
+    u16 pointA[] = {100,110};
+    u16 pointB[] = {100,20};
+    u16 pointC[] = {25,20};
+    u16 pointD[] = {25,110};
+    u16 pointE[] = {100,110};
+    u16 pointF[] = {100,20};
+    u16 pointG[] = {25,20};
+    u16 pointH[] = {25,110};
 
+    u16 oldpointA[] = {100,110};
+    u16 oldpointB[] = {100,20};
+    u16 oldpointC[] = {25,20};
+    u16 oldpointD[] = {25,110};
+    u16 oldpointE[] = {100,110};
+    u16 oldpointF[] = {100,20};
+    u16 oldpointG[] = {25,20};
+    u16 oldpointH[] = {25,110};
     float t = 0;
-    float r = 0;
-    float xScale = 50;
+    float xScale = 40;
     float yScale = 10;
+    u16 buffer = 0;
 
-    // mode3DrawLine(1,1,240,2,0x0000);
-    // mode3DrawLine(240,2,1,1,0x0000);
-    // mode3DrawLine(1,1,3,180,0x0000);
-    // mode3DrawLine(3,180,1,1,0x0000);
+    u16 colour1 = 0x001F;
+    u16 colour2 = 0x0310;
+    u16 colour3 = 0x3100;
+    u16 colour4 = 0xF100;
+    u16 blank   = 0x0000;
+
+    for (u32 i = VRAM; i < VRAM+0x17ff0; i++)
+    {
+        set16Bit(i, 0, 16, 0x0000);
+    }
+    setBackgroundScale(2, 0x1 << 7, 0x1 << 7);
+    // set16Bit(0x04000020, 0, 16, 0x1 << 7);
+    // set16Bit(0x04000026, 0, 16, 0x1 << 7);
 
     while(1)
     {   
+        // mode5SetPixel(buffer, 0,0,colour1);
+        // mode5SetPixel(buffer, (SCREENWIDTH/2)-1,0,colour1);
+        // mode5SetPixel(buffer, (SCREENWIDTH/2)-1,(SCREENHEIGHT/2)-1,colour1);
+        // mode5SetPixel(buffer, 0,(SCREENHEIGHT/2)-1,colour1);
 
+        // draw cube
+        mode5DrawLine(buffer,pointA[0],pointA[1],pointB[0],pointB[1],colour1); 
+        mode5DrawLine(buffer,pointB[0],pointB[1],pointC[0],pointC[1],colour2); 
+        mode5DrawLine(buffer,pointC[0],pointC[1],pointD[0],pointD[1],colour2);
+        mode5DrawLine(buffer,pointD[0],pointD[1],pointA[0],pointA[1],colour1);
+        mode5DrawLine(buffer,pointE[0],pointE[1],pointF[0],pointF[1],colour3);
+        mode5DrawLine(buffer,pointF[0],pointF[1],pointG[0],pointG[1],colour3);
+        mode5DrawLine(buffer,pointG[0],pointG[1],pointH[0],pointH[1],colour4);
+        mode5DrawLine(buffer,pointH[0],pointH[1],pointE[0],pointE[1],colour4);
+        mode5DrawLine(buffer,pointE[0],pointE[1],pointA[0],pointA[1],colour1);
+        mode5DrawLine(buffer,pointF[0],pointF[1],pointB[0],pointB[1],colour3);
+        mode5DrawLine(buffer,pointG[0],pointG[1],pointC[0],pointC[1],colour2);
+        mode5DrawLine(buffer,pointH[0],pointH[1],pointD[0],pointD[1],colour4);
 
-        mode3DrawLine(pointA[0],pointA[1],pointB[0],pointB[1],0xFFFF);
-        mode3DrawLine(pointB[0],pointB[1],pointC[0],pointC[1],0xFFFF);
-        mode3DrawLine(pointC[0],pointC[1],pointD[0],pointD[1],0xFFFF);
-        mode3DrawLine(pointD[0],pointD[1],pointA[0],pointA[1],0xFFFF);
-        mode3DrawLine(pointE[0],pointE[1],pointF[0],pointF[1],0xFFFF);
-        mode3DrawLine(pointF[0],pointF[1],pointG[0],pointG[1],0xFFFF);
-        mode3DrawLine(pointG[0],pointG[1],pointH[0],pointH[1],0xFFFF);
-        mode3DrawLine(pointH[0],pointH[1],pointE[0],pointE[1],0xFFFF);
-        mode3DrawLine(pointE[0],pointE[1],pointA[0],pointA[1],0xFFFF);
-        mode3DrawLine(pointF[0],pointF[1],pointB[0],pointB[1],0xFFFF);
-        mode3DrawLine(pointG[0],pointG[1],pointC[0],pointC[1],0xFFFF);
-        mode3DrawLine(pointH[0],pointH[1],pointD[0],pointD[1],0xFFFF);
+        buffer = flip_buffers(buffer);
 
+        mode5DrawLine(buffer,oldpointA[0],oldpointA[1],oldpointB[0],oldpointB[1],blank);
+        mode5DrawLine(buffer,oldpointB[0],oldpointB[1],oldpointC[0],oldpointC[1],blank);
+        mode5DrawLine(buffer,oldpointC[0],oldpointC[1],oldpointD[0],oldpointD[1],blank);
+        mode5DrawLine(buffer,oldpointD[0],oldpointD[1],oldpointA[0],oldpointA[1],blank);
+        mode5DrawLine(buffer,oldpointE[0],oldpointE[1],oldpointF[0],oldpointF[1],blank);
+        mode5DrawLine(buffer,oldpointF[0],oldpointF[1],oldpointG[0],oldpointG[1],blank);
+        mode5DrawLine(buffer,oldpointG[0],oldpointG[1],oldpointH[0],oldpointH[1],blank);
+        mode5DrawLine(buffer,oldpointH[0],oldpointH[1],oldpointE[0],oldpointE[1],blank);
+        mode5DrawLine(buffer,oldpointE[0],oldpointE[1],oldpointA[0],oldpointA[1],blank);
+        mode5DrawLine(buffer,oldpointF[0],oldpointF[1],oldpointB[0],oldpointB[1],blank);
+        mode5DrawLine(buffer,oldpointG[0],oldpointG[1],oldpointC[0],oldpointC[1],blank);
+        mode5DrawLine(buffer,oldpointH[0],oldpointH[1],oldpointD[0],oldpointD[1],blank);
+        
+        //take old values
+        oldpointA[0] = pointA[0];
+        oldpointB[0] = pointB[0];
+        oldpointC[0] = pointC[0];
+        oldpointD[0] = pointD[0];
+        oldpointA[1] = pointA[1];
+        oldpointB[1] = pointB[1];
+        oldpointC[1] = pointC[1];
+        oldpointD[1] = pointD[1];
+        oldpointE[0] = pointE[0];
+        oldpointF[0] = pointF[0];
+        oldpointG[0] = pointG[0];
+        oldpointH[0] = pointH[0];
+        oldpointE[1] = pointE[1];
+        oldpointF[1] = pointF[1];
+        oldpointG[1] = pointG[1];
+        oldpointH[1] = pointH[1];
         // left to right
-        pointA[0] = xScale*cos(t) + 120; 
-        pointB[0] = xScale*cos(t+1.57) + 120;
-        pointC[0] = xScale*cos(t+3.14) + 120; 
-        pointD[0] = xScale*cos(t+4.71) + 120; 
+        pointA[0] = xScale*cos(t) + 60; 
+        pointB[0] = xScale*cos(t+1.57) + 60;
+        pointC[0] = xScale*cos(t+3.14) + 60; 
+        pointD[0] = xScale*cos(t+4.71) + 60; 
 
-        pointA[1] = yScale*sin(t) + 110; 
-        pointB[1] = yScale*sin(t+1.57) + 110;
-        pointC[1] = yScale*sin(t+3.14) + 110; 
-        pointD[1] = yScale*sin(t+4.71) + 110; 
+        pointA[1] = yScale*sin(t) + 60; 
+        pointB[1] = yScale*sin(t+1.57) + 60;
+        pointC[1] = yScale*sin(t+3.14) + 60; 
+        pointD[1] = yScale*sin(t+4.71) + 60; 
 
-        pointE[0] = xScale*cos(t) + 120; 
-        pointF[0] = xScale*cos(t+1.57) + 120;
-        pointG[0] = xScale*cos(t+3.14) + 120; 
-        pointH[0] = xScale*cos(t+4.71) + 120; 
+        pointE[0] = xScale*cos(t) + 60; 
+        pointF[0] = xScale*cos(t+1.57) + 60;
+        pointG[0] = xScale*cos(t+3.14) + 60; 
+        pointH[0] = xScale*cos(t+4.71) + 60; 
 
-        pointE[1] = yScale*sin(t) + 40; 
-        pointF[1] = yScale*sin(t+1.57) + 40;
-        pointG[1] = yScale*sin(t+3.14) + 40; 
-        pointH[1] = yScale*sin(t+4.71) + 40; 
+        pointE[1] = yScale*sin(t) + 20; 
+        pointF[1] = yScale*sin(t+1.57) + 20;
+        pointG[1] = yScale*sin(t+3.14) + 20; 
+        pointH[1] = yScale*sin(t+4.71) + 20; 
 
-        // top to bottom 
-        if (read16Bit(REG_KEYINPUT, 0, 1) == 0)
-        {
-            pointA[1] = xScale*cos(r) + 80; 
-            pointB[1] = xScale*cos(r+1.57) + 80;
-            pointC[1] = xScale*cos(r+3.14) + 80; 
-            pointD[1] = xScale*cos(r+4.71) + 80; 
-
-            pointA[0] = yScale*sin(r) + 150; 
-            pointB[0] = yScale*sin(r+1.57) + 150;
-            pointC[0] = yScale*sin(r+3.14) + 150; 
-            pointD[0] = yScale*sin(r+4.71) + 150; 
-
-            pointE[1] = xScale*cos(r) + 80; 
-            pointF[1] = xScale*cos(r+1.57) + 80;
-            pointG[1] = xScale*cos(r+3.14) + 80; 
-            pointH[1] = xScale*cos(r+4.71) + 80; 
-
-            pointE[0] = yScale*sin(r) + 80; 
-            pointF[0] = yScale*sin(r+1.57) + 80;
-            pointG[0] = yScale*sin(r+3.14) + 80; 
-            pointH[0] = yScale*sin(r+4.71) + 80;
-        }
-
-
-        mode3DrawLine(pointA[0],pointA[1],pointB[0],pointB[1],0x001F);
-        mode3DrawLine(pointB[0],pointB[1],pointC[0],pointC[1],0x03E0);
-        mode3DrawLine(pointC[0],pointC[1],pointD[0],pointD[1],0x7C00);
-        mode3DrawLine(pointD[0],pointD[1],pointA[0],pointA[1],0x0000);
-        mode3DrawLine(pointE[0],pointE[1],pointF[0],pointF[1],0x001F);
-        mode3DrawLine(pointF[0],pointF[1],pointG[0],pointG[1],0x03E0);
-        mode3DrawLine(pointG[0],pointG[1],pointH[0],pointH[1],0x7C00);
-        mode3DrawLine(pointH[0],pointH[1],pointE[0],pointE[1],0x0000);
-        mode3DrawLine(pointE[0],pointE[1],pointA[0],pointA[1],0x001F);
-        mode3DrawLine(pointF[0],pointF[1],pointB[0],pointB[1],0x03E0);
-        mode3DrawLine(pointG[0],pointG[1],pointC[0],pointC[1],0x7C00);
-        mode3DrawLine(pointH[0],pointH[1],pointD[0],pointD[1],0x0000);
-
-
-        vu32 y = 0;
-        for (u16 x = 0; x < 0x0FFF; x++)
-        {
-            y = y + 3;
-            y = y + 1;
-            y = y + 1;
-        }
-
-        if (read16Bit(REG_KEYINPUT, 4,1) == 0) t = t + 0.1;
-        if (read16Bit(REG_KEYINPUT, 5,1) == 0) t = t - 0.1;
-        if (read16Bit(REG_KEYINPUT, 6,1) == 0) r = r + 0.1;
-        if (read16Bit(REG_KEYINPUT, 7,1) == 0) r = r - 0.1;
+        t += .01;
         
-        
-        while(getVBlankStatus())
-        {
-
-        }; // VSync
+        while(getVCount() != 160){}; // VSync 60fps
     };
     return(0);
 }
