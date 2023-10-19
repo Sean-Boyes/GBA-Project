@@ -12,3 +12,5 @@ GBA-Project.elf
 build/main.o
 build/main.d
 build/gbatest.map
+.vscode/c_cpp_properties.json
+.vscode/launch.json
