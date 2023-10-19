@@ -8,7 +8,6 @@
 *.d
 gbatest.sav
 GBA-Project.sav
-GBA-Project.gba
 GBA-Project.elf
 build/main.o
 build/main.d
