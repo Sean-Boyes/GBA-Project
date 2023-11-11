@@ -128,10 +128,21 @@ void mode5SetPixel(u16 buffer, u16 xCoordinate, u16 yCoordinate, u16 colour)
 {
     ((unsigned short*)(VRAM + (buffer * 0xA000)))[xCoordinate+yCoordinate*160] = colour;
 }
-void mode5DrawLine(u16 buffer, u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
+void mode5DrawLine(u16 buffer, s16 x0, s16 y0, s16 x1, s16 y1, u16 colour)
 {
-    u16 x = x0;
-    u16 y = y0;
+    s16 x = x0;
+    s16 y = y0;
+
+    // flatten
+    // if (x1 < 0) {x1 = 0;}
+    // if (y1 < 0) {y1 = 0;}
+    // if (x1 > SCREENWIDTH/2) {x1 = SCREENWIDTH/2;}
+    // if (y1 > SCREENHEIGHT/2) {y1 = SCREENHEIGHT/2;}
+
+    // if (x0 < 0) {x0 = 0;}
+    // if (y0 < 0) {y0 = 0;}
+    // if (x0 > SCREENWIDTH/2) {x0 = SCREENWIDTH/2;}
+    // if (y0 > SCREENHEIGHT/2) {y0 = SCREENHEIGHT/2;}
 
     if ( abs(x1-x0) >= abs(y1-y0) )
     {
@@ -139,7 +150,7 @@ void mode5DrawLine(u16 buffer, u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
         u16 changeP = change + 128;
         while (x != x1)
         {
-            mode5SetPixel(buffer, x, y, colour);
+            if (x > 0 && y > 0 && x < SCREENWIDTH && y < SCREENHEIGHT) mode5SetPixel(buffer, x, y, colour);
             x = x - 1 + 2*(x0 < x1);
             y = y0 + (2*(y0 < y1)-1)*(changeP >> 8);
             changeP += change;
@@ -151,7 +162,7 @@ void mode5DrawLine(u16 buffer, u16 x0, u16 y0, u16 x1, u16 y1, u16 colour)
         u16 changeP = change;
         while (y != y1)
         {
-            mode5SetPixel(buffer, x, y, colour);
+            if (x > 0 && y > 0 && x < SCREENWIDTH && y < SCREENHEIGHT) mode5SetPixel(buffer, x, y, colour);
             y = y - 1 + 2*(y0 < y1);
             x = x0 + (2*(x0 < x1)-1)*(changeP >> 8);
             changeP += change;
@@ -415,6 +426,48 @@ void setBackgroundRotation(u8 background, u32 xValue, u32 yValue)
 /*
  *  ~Windowing Registers~
 */
+/*
+ * TODO: Optimize later with *(vu16*)(REG) = value
+*/
+void setWindowPosition(u8 window, u16 xStart, u16 xEnd, u16 yStart, u16 yEnd)
+{
+    switch (window)
+    {
+        case 0: 
+            set16Bit(REG_WIN0H, 0, 16, (xStart << 8) | xEnd); 
+            set16Bit(REG_WIN0V, 0, 16, (yStart << 8) | yEnd);
+            break;
+        case 1: 
+            set16Bit(REG_WIN1H, 0, 16, (xStart << 8) | xEnd); 
+            set16Bit(REG_WIN1V, 0, 16, (yStart << 8) | yEnd);
+            break;
+    }
+}
+
+/*
+ *  TODO: Optimize please
+*/
+void setInsideWindowSettings(bool window, bool bg0, bool bg1, bool bg2, bool bg3, bool sprites, bool blends)
+{
+    switch (window)
+    {
+        case 0:
+            set16Bit(REG_WININ, 0, 6, (bg0) | (bg1 << 1) | (bg2 << 2) | (bg3 << 3) | (sprites << 4) | (blends << 5)); break;
+        case 1:
+            set16Bit(REG_WININ, 8, 6, (bg0 << 8) | (bg1 << 9) | (bg2 << 0xA) | (bg3 << 0xB) | (sprites << 0xC) | (blends << 0xD)); break;
+    }
+}
+
+void setOutsideWindowSettings(bool window, bool bg0, bool bg1, bool bg2, bool bg3, bool sprites, bool blends)
+{
+    switch (window)
+    {
+        case 0:
+            set16Bit(REG_WINOUT, 0, 6, (bg0) | (bg1 << 1) | (bg2 << 2) | (bg3 << 3) | (sprites << 4) | (blends << 5)); break;
+        case 1:
+            set16Bit(REG_WINOUT, 8, 6, (bg0 << 8) | (bg1 << 9) | (bg2 << 0xA) | (bg3 << 0xB) | (sprites << 0xC) | (blends << 0xD)); break;
+    }
+}
 
 
 #endif
