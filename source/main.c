@@ -9,156 +9,105 @@
 #include "../include/GBATypes.h"
 #include "../include/GBARegisters.h"
 #include "../include/GBAGraphics.h"
+#include "../include/GBAMath.h"
+#include "../include/GBA3D.h"
+
 
 int main()
 {
+    // setup
     setGraphicMode(5);
     setBackground(2, 1);
     setScreenBlank(0);
+    setBackgroundScale(2, 1<<7, 1<<7);
+    s8 buffer = 0;
+    u16 frame = 1;
 
-    // ((unsigned short*)0x06000000)[120+80*240] = 0x001F;
-    // ((unsigned short*)0x06000000)[136+80*240] = 0x03E0;
-    // ((unsigned short*)0x06000000)[120+96*240] = 0x7C00;
+    // colours
+    u16 black = 0x0000;
+    u16 white = 0xFFFF;
 
-    // mode3SetPixel(1,1,0x001F); // Red
-    // mode3SetPixel(1,2,0x03E0); // Green
-    // mode3SetPixel(1,3,0x7C00); // Blue
-    // mode3SetPixel(1,1,0xFFFF); // White
+    struct camera camera = createCamera(0,0,150,0,0,0);
 
-    // mode3Line(1,1,10,10,0x7C00);
+    // create object
+    u16 scalar = 50;
 
-    // from 1,1 to 3,3
+    struct point3d p1 = createVertex(scalar,scalar,scalar);
+    struct point3d p2 = createVertex(-scalar,scalar,scalar);
+    struct point3d p3 = createVertex(-scalar,-scalar,scalar);
+    struct point3d p4 = createVertex(scalar,-scalar,scalar);
+    struct point3d p5 = createVertex(scalar,scalar,-scalar);
+    struct point3d p6 = createVertex(-scalar,scalar,-scalar);
+    struct point3d p7 = createVertex(-scalar,-scalar,-scalar);
+    struct point3d p8 = createVertex(scalar,-scalar,-scalar);
 
-    // for (u16 x = 0; x < 24; x++)
-    // {
-    //     for (u16 y = 0; y < 16; y++)
-    //     {
-    //         mode3DrawLine(x*24,y*16,SCREENWIDTH-1,SCREENHEIGHT-1,0x001F);
-    //         mode3DrawLine(x*24,y*16,0,SCREENHEIGHT-1,0x03E0);
-    //         mode3DrawLine(x*24,y*16,SCREENWIDTH-1,0,0x7C00);
-    //         mode3DrawLine(x*24,y*16,0,0,0x7777);
-    //     }
-    // }
-    // mode3SetPixel(0,0,0);
-    // mode3SetPixel(239,159,0);
-    // mode3SetPixel(0,159,0);
-    // mode3SetPixel(239,0,0);
-
-    // Vertex test
-
-    u16 pointA[] = {100,110};
-    u16 pointB[] = {100,20};
-    u16 pointC[] = {25,20};
-    u16 pointD[] = {25,110};
-    u16 pointE[] = {100,110};
-    u16 pointF[] = {100,20};
-    u16 pointG[] = {25,20};
-    u16 pointH[] = {25,110};
-
-    u16 oldpointA[] = {100,110};
-    u16 oldpointB[] = {100,20};
-    u16 oldpointC[] = {25,20};
-    u16 oldpointD[] = {25,110};
-    u16 oldpointE[] = {100,110};
-    u16 oldpointF[] = {100,20};
-    u16 oldpointG[] = {25,20};
-    u16 oldpointH[] = {25,110};
-    float t = 0;
-    float xScale = 40;
-    float yScale = 10;
-    u16 buffer = 0;
-
-    u16 colour1 = 0x001F;
-    u16 colour2 = 0x0310;
-    u16 colour3 = 0x3100;
-    u16 colour4 = 0xF100;
-    u16 blank   = 0x0000;
-
-    for (u32 i = VRAM; i < VRAM+0x17ff0; i++)
-    {
-        set16Bit(i, 0, 16, 0x0000);
-    }
-    setBackgroundScale(2, 0x1 << 7, 0x1 << 7);
-    // set16Bit(0x04000020, 0, 16, 0x1 << 7);
-    // set16Bit(0x04000026, 0, 16, 0x1 << 7);
+    struct polygon object1[] = {createPolygon(createVertex(10,10,10), createVertex(-10,10,10), createVertex(-10,-10,10)), 
+                                createPolygon(createVertex(-10,-10,10), createVertex(-10,10,10), createVertex(-10,10,-10)), 
+                                createPolygon(createVertex(10,10,10), createVertex(-10,10,10), createVertex(-10,10,-10))};
+    u16 cubePolyCount = 12;
+    struct polygon cube[] = {createPolygon(p1,p2,p3),createPolygon(p1,p3,p4), // front
+                             createPolygon(p5,p6,p7),createPolygon(p5,p7,p8), // back
+                             createPolygon(p3,p4,p7),createPolygon(p4,p7,p8), // top
+                             createPolygon(p1,p2,p5),createPolygon(p2,p5,p6), // bottom
+                             createPolygon(p1,p4,p5),createPolygon(p4,p5,p8), // right
+                             createPolygon(p2,p3,p6),createPolygon(p3,p6,p7)  // left
+                             };
 
     while(1)
     {   
-        // mode5SetPixel(buffer, 0,0,colour1);
-        // mode5SetPixel(buffer, (SCREENWIDTH/2)-1,0,colour1);
-        // mode5SetPixel(buffer, (SCREENWIDTH/2)-1,(SCREENHEIGHT/2)-1,colour1);
-        // mode5SetPixel(buffer, 0,(SCREENHEIGHT/2)-1,colour1);
+        // Clear screen
+        for (u32 i = 0; i < (SCREENHEIGHT * SCREENWIDTH); i++)
+        {
+            mode5SetPixel(buffer, i, 0, white);
+        } 
+        
+        drawObject(buffer, cube, cubePolyCount, camera);
 
-        // draw cube
-        mode5DrawLine(buffer,pointA[0],pointA[1],pointB[0],pointB[1],colour1); 
-        mode5DrawLine(buffer,pointB[0],pointB[1],pointC[0],pointC[1],colour2); 
-        mode5DrawLine(buffer,pointC[0],pointC[1],pointD[0],pointD[1],colour2);
-        mode5DrawLine(buffer,pointD[0],pointD[1],pointA[0],pointA[1],colour1);
-        mode5DrawLine(buffer,pointE[0],pointE[1],pointF[0],pointF[1],colour3);
-        mode5DrawLine(buffer,pointF[0],pointF[1],pointG[0],pointG[1],colour3);
-        mode5DrawLine(buffer,pointG[0],pointG[1],pointH[0],pointH[1],colour4);
-        mode5DrawLine(buffer,pointH[0],pointH[1],pointE[0],pointE[1],colour4);
-        mode5DrawLine(buffer,pointE[0],pointE[1],pointA[0],pointA[1],colour1);
-        mode5DrawLine(buffer,pointF[0],pointF[1],pointB[0],pointB[1],colour3);
-        mode5DrawLine(buffer,pointG[0],pointG[1],pointC[0],pointC[1],colour2);
-        mode5DrawLine(buffer,pointH[0],pointH[1],pointD[0],pointD[1],colour4);
+        while(getVCount() != 5){}
 
+        // flip buffer
         buffer = flip_buffers(buffer);
+        frame += 1;
+        if (frame > 60) frame = 1;
 
-        mode5DrawLine(buffer,oldpointA[0],oldpointA[1],oldpointB[0],oldpointB[1],blank);
-        mode5DrawLine(buffer,oldpointB[0],oldpointB[1],oldpointC[0],oldpointC[1],blank);
-        mode5DrawLine(buffer,oldpointC[0],oldpointC[1],oldpointD[0],oldpointD[1],blank);
-        mode5DrawLine(buffer,oldpointD[0],oldpointD[1],oldpointA[0],oldpointA[1],blank);
-        mode5DrawLine(buffer,oldpointE[0],oldpointE[1],oldpointF[0],oldpointF[1],blank);
-        mode5DrawLine(buffer,oldpointF[0],oldpointF[1],oldpointG[0],oldpointG[1],blank);
-        mode5DrawLine(buffer,oldpointG[0],oldpointG[1],oldpointH[0],oldpointH[1],blank);
-        mode5DrawLine(buffer,oldpointH[0],oldpointH[1],oldpointE[0],oldpointE[1],blank);
-        mode5DrawLine(buffer,oldpointE[0],oldpointE[1],oldpointA[0],oldpointA[1],blank);
-        mode5DrawLine(buffer,oldpointF[0],oldpointF[1],oldpointB[0],oldpointB[1],blank);
-        mode5DrawLine(buffer,oldpointG[0],oldpointG[1],oldpointC[0],oldpointC[1],blank);
-        mode5DrawLine(buffer,oldpointH[0],oldpointH[1],oldpointD[0],oldpointD[1],blank);
-        
-        //take old values
-        oldpointA[0] = pointA[0];
-        oldpointB[0] = pointB[0];
-        oldpointC[0] = pointC[0];
-        oldpointD[0] = pointD[0];
-        oldpointA[1] = pointA[1];
-        oldpointB[1] = pointB[1];
-        oldpointC[1] = pointC[1];
-        oldpointD[1] = pointD[1];
-        oldpointE[0] = pointE[0];
-        oldpointF[0] = pointF[0];
-        oldpointG[0] = pointG[0];
-        oldpointH[0] = pointH[0];
-        oldpointE[1] = pointE[1];
-        oldpointF[1] = pointF[1];
-        oldpointG[1] = pointG[1];
-        oldpointH[1] = pointH[1];
-        // left to right
-        pointA[0] = xScale*cos(t) + 60; 
-        pointB[0] = xScale*cos(t+1.57) + 60;
-        pointC[0] = xScale*cos(t+3.14) + 60; 
-        pointD[0] = xScale*cos(t+4.71) + 60; 
-
-        pointA[1] = yScale*sin(t) + 60; 
-        pointB[1] = yScale*sin(t+1.57) + 60;
-        pointC[1] = yScale*sin(t+3.14) + 60; 
-        pointD[1] = yScale*sin(t+4.71) + 60; 
-
-        pointE[0] = xScale*cos(t) + 60; 
-        pointF[0] = xScale*cos(t+1.57) + 60;
-        pointG[0] = xScale*cos(t+3.14) + 60; 
-        pointH[0] = xScale*cos(t+4.71) + 60; 
-
-        pointE[1] = yScale*sin(t) + 20; 
-        pointF[1] = yScale*sin(t+1.57) + 20;
-        pointG[1] = yScale*sin(t+3.14) + 20; 
-        pointH[1] = yScale*sin(t+4.71) + 20; 
-
-        t += .01;
-        
-        while(getVCount() != 160){}; // VSync 60fps
+        // TODO: define as macros
+        if (frame % 1 == 0)
+        {
+            if (read16Bit(REG_KEYINPUT, 8,1) == 0) 
+            {
+                // turn right
+                camera.roll += (5) * (3.1415/180);
+            }
+            if (read16Bit(REG_KEYINPUT, 9,1) == 0) 
+            {
+                // turn left
+                camera.roll -= (5) * (3.1415/180);
+            }
+            if (read16Bit(REG_KEYINPUT, 6,1) == 0) 
+            {
+                // forward
+                camera.z += (10 * cos(camera.roll));
+                camera.x += (10 * sin(camera.roll));
+            }
+            if (read16Bit(REG_KEYINPUT, 7,1) == 0) 
+            {
+                // back
+                camera.z -= (10 * cos(camera.roll));
+                camera.x -= (10 * sin(camera.roll));
+            }
+            if (read16Bit(REG_KEYINPUT, 4,1) == 0) 
+            {
+                // right
+                camera.z += (10 * cos(camera.roll+1.57));
+                camera.x += (10 * sin(camera.roll+1.57));
+            }
+            if (read16Bit(REG_KEYINPUT, 5,1) == 0) 
+            {
+                // left
+                camera.z -= (10 * cos(camera.roll+1.57));
+                camera.x -= (10 * sin(camera.roll+1.57));
+            }
+        }
     };
     return(0);
 }
