@@ -125,9 +125,10 @@ void drawPolygon(u8 buffer, struct polygon polygon, struct camera camera)
 
     // TODO: Fill in poly according to distance from camera
 }
-void drawObject(u8 buffer, struct polygon object[], struct camera camera)
+void drawObject(u8 buffer, struct polygon object[], u16 polyCount, struct camera camera)
 {
-    for ( int i = 2; i > 0; i--)
+    // potentialy could wait untill object[i] is a null character of some sort
+    for ( int i = 0; i < polyCount; i++)
     {
         drawPolygon(buffer, object[i], camera);
     }
