@@ -67,6 +67,7 @@ struct camera createCamera(s8 x, s8 y, s8 z, s8 yaw, s8 roll, s8 pitch)
     return camera;
 }
 
+// TODO: implement fastsin and fastcos to eliminate float numbers
 struct point2d getScreenCoordinate(struct point3d vertex, struct camera camera)
 {
     struct point2d point;
@@ -108,16 +109,26 @@ struct polygon createPolygon(struct point3d vertex1, struct point3d vertex2, str
     polygon.vertex3 = vertex3;
     return polygon;
 }
+struct point3d changeBasis(struct point3d vertex, struct point3d basisVector)
+{
+    struct point3d resultant;
+    
+    resultant.x = vertex.x + basisVector.x;
+    resultant.y = vertex.y + basisVector.y;
+    resultant.z = vertex.z + basisVector.z;
+
+    return resultant;
+}
 
 void drawVector(u8 buffer, struct point2d vec1, struct point2d vec2, u16 colour)
 {
     mode5DrawLine(buffer, vec1.x, vec1.y, vec2.x, vec2.y, colour);
 }
-void drawPolygon(u8 buffer, struct polygon polygon, struct camera camera)
+void drawPolygon(u8 buffer, struct polygon polygon, struct camera camera, struct point3d origin)
 {
-    struct point2d v1 = getScreenCoordinate(polygon.vertex1, camera);
-    struct point2d v2 = getScreenCoordinate(polygon.vertex2, camera);
-    struct point2d v3 = getScreenCoordinate(polygon.vertex3, camera);
+    struct point2d v1 = getScreenCoordinate(changeBasis(polygon.vertex1, origin), camera);
+    struct point2d v2 = getScreenCoordinate(changeBasis(polygon.vertex2, origin), camera);
+    struct point2d v3 = getScreenCoordinate(changeBasis(polygon.vertex3, origin), camera);
 
     drawVector(buffer, v1, v2, 0x0000);
     drawVector(buffer, v2, v3, 0x0000);
@@ -125,12 +136,12 @@ void drawPolygon(u8 buffer, struct polygon polygon, struct camera camera)
 
     // TODO: Fill in poly according to distance from camera
 }
-void drawObject(u8 buffer, struct polygon object[], u16 polyCount, struct camera camera)
+void drawObject(u8 buffer, struct polygon object[], u16 polyCount, struct camera camera, struct point3d origin)
 {
     // potentialy could wait untill object[i] is a null character of some sort
     for ( int i = 0; i < polyCount; i++)
     {
-        drawPolygon(buffer, object[i], camera);
+        drawPolygon(buffer, object[i], camera, origin);
     }
 }
 
