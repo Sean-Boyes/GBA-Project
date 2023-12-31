@@ -1,5 +1,5 @@
 # GBA-Project
-An original C library for development of games and applications for the Gameboy Advanced
+An Incomplete original C library for development of games and applications for the Gameboy Advanced
 # Features Overview
 - Basic functions for IO registers
 - GBA math trig functions and fixed-point numbers in progress
